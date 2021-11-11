@@ -12,10 +12,8 @@ struct ContentView: View {
     @State private var rotation = 0.0
     var body: some View {
         VStack {
-            Text("Dice Toss")
-                .padding()
-            Text ("\(randomValue)")
-                .font(.system(size: 72))
+            Text("Dice Roll")
+                .font(.title)
                 .padding()
             Image("pips \(randomValue)")
                 .resizable()
@@ -23,18 +21,28 @@ struct ContentView: View {
                 .rotationEffect(.degrees(rotation))
                 .rotation3DEffect(.degrees(rotation), axis: (x: 1, y: 1, z: 0))
                 .onTapGesture {
-                    withAnimation(.default) {
+                    chooseRandom(times: 3)
+                    withAnimation(.interpolatingSpring(stiffness: 10, damping: 2)) {
                         rotation += 360
                     }
-                    randomValue = Int.random(in:1...6)
                 }
-            Spacer()
-        }
+        Spacer()
     }
 }
+
+func chooseRandom(times: Int) {
+    if times > 0 {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            randomValue = Int.random(in: 1...6)
+            chooseRandom(times: times - 1) 
+            }
+        }
+    }
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+        }
     }
 }
